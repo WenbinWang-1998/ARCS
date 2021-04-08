@@ -101,7 +101,7 @@ class RankPairingHeap:
                 node.rank=node.leftChild.rank+1
 
 
-    def decreaseKey(self,newKey,node:RankPNode):
+    def decreaseKey(self,newKey,node:RankPNode): #newKey为新的distance，node为所选节点
         node.key=newKey
         if node.parent==None: # if the node is in the root array
             return
@@ -148,14 +148,14 @@ class RankPairingHeap:
 
 #TEST
 if __name__=='__main__':
-    def Order(heap):
+    def Order(heap): #测试代码
         for i in heap.root:
             if i!=None:
                 preOrder(i)
                 print()
             else:
                 print(i)
-    def preOrder(node:RankPNode):
+    def preOrder(node:RankPNode): #先序遍历
         if node!=None:
             print(f"key:{node.key} rank:{node.rank}",end=" ")
         if node.leftChild!=None:
