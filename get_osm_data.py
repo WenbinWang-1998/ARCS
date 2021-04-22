@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import json
 import xml.dom.minidom
+from geopy.distance import geodesic# pip install geopy
 
 dom = xml.dom.minidom.parse('BostonMap.txt')
 root = dom.documentElement
@@ -29,13 +30,15 @@ for node in nodelist:
         node_dic_all[node_id] = {
             'address': [node_lat, node_lon],
             'name': node_name,
-            'neighbours': []
+            'neighbours': [],
+            'parentnode': []
         }
         name_dic[node_name] = [node_id, node_lat, node_lon]
     else:
         node_dic_all[node_id] = {
             'address': (node_lat, node_lon),
-            'neighbours': []
+            'neighbours': [],
+            'parentnode': []
         }
 
 
@@ -74,8 +77,9 @@ for way in waylist:
             j = j + 1
         for k in range(j):
             if k > 0:
-                node_dic_all[a[k-1][0]]['neighbours'].append(a[k])
-                node_dic_all[a[k][0]]['neighbours'].append(a[k-1])
+                distance = geodesic((a[k][1],a[k][2]), (a[k-1][1],a[k-1][2])).km# 计算相邻点之间的距离
+                node_dic_all[a[k-1][0]]['neighbours'].append([a[k],distance])
+                node_dic_all[a[k][0]]['neighbours'].append([a[k-1],distance])
     way_node[way_id] = each_way_node
 #print (len(node_dic2))
 #with open('way_node_all.json', 'w') as fout:
@@ -90,9 +94,10 @@ with open('way_node.json', 'w') as fout:
     json.dump(way_node, fout, indent = 4)
 
 '''
-node_all文件里存放所有node的id，经纬度，名称和所有的相邻点。
+node_all文件里存放所有node的id，经纬度，名称和所有的相邻点之间的距离。
 如果该node无name，则无此项
 可以用于根据id查询所有node的lat,lon,name
+还可用于查找每个点的相邻点，包括id,经纬度和距离
 数据结构："61340495": {
         "address": [
             42.3577809,
@@ -101,26 +106,39 @@ node_all文件里存放所有node的id，经纬度，名称和所有的相邻点
         "name": "Ralph Cook Square",
         "neighbours": [
             [
-                "1038908673",
-                42.3576959,
-                -71.0706028
+                [
+                    "1038908673",
+                    42.3576959,
+                    -71.0706028
+                ],
+                0.027902191198272253
             ],
             [
-                "61510043",
-                42.3577985,
-                -71.0702046
+                [
+                    "61510043",
+                    42.3577985,
+                    -71.0702046
+                ],
+                0.006835163310998479
             ],
             [
-                "61340491",
-                42.3584617,
-                -71.0706523
+                [
+                    "61340491",
+                    42.3584617,
+                    -71.0706523
+                ],
+                0.08148039635396587
             ],
             [
-                "61469722",
-                42.357773,
-                -71.070279
+                [
+                    "61469722",
+                    42.357773,
+                    -71.070279
+                ],
+                0.0009729353659836035
             ]
-        ]
+        ],
+        "parentnode": []
     }
 '''
 with open('node_all.json', 'w') as fout:
