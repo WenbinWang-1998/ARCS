@@ -1,13 +1,16 @@
 # ref: https://blog.csdn.net/ailinyingai/article/details/100523926
 
+import math
+
 class Node:
-    def __init__(self, value):
+    def __init__(self, id, value):
         self.parent = self.children = None
         self.value = value
         self.degree = 0
         self.left = self.right = self
         self.marked = False
         self.vertex = None
+        self.id = id
 
     def find_min(self):
         min_node = self
@@ -28,15 +31,15 @@ class Node:
             current_node.parent = None
             current_node = current_node.right
     
-    def search_child(self, key):  # 循环搜索关键字为key的节点
+    def search_child(self, id):  # 循环搜索id的节点
         w = self
         v = self
         res = None
         while 1:
-            if w.value == key:
+            if w.id == id:
                 return w
             if w.children != None:
-                res = w.children.search_child(key)
+                res = w.children.search_child(id)
             if res != None:
                 return res
             w = w.right
@@ -131,7 +134,6 @@ class FibonacciHeap:
                 current_node = self.link_node(link_a, link_b)
             node_array[current_node.degree] = current_node
             current_node = current_node.right
-    
     # remove the minimum node and return this node
     def extract_min(self):
         min_node = self.min
@@ -186,8 +188,8 @@ class FibonacciHeap:
         self.insert(node)
         self.count -= 1
 
-    def decrease_key(self, key, value):
-        node = self.find_node(key)
+    def decrease_key(self, id, value):
+        node = self.find_node(id)
         if node.value < value:  # increase key, then return
             return
         node_parent = node.parent
@@ -207,24 +209,22 @@ class FibonacciHeap:
         # TODO: cause dead endless loop 
         # self.consolidate()
     
-    def find_node(self, key):
+    def find_node(self, id):
         w = self.min
         res = None
-        if w.value > key:
-            return None
-        else:
-            cr = w
-            while True:
-                if cr.value == key:
-                    return cr
-                else:
-                    if cr.children != None:
-                        res = cr.children.search_child(key)
-                    if res != None:
-                        return res
-                    cr = cr.right
-                    if cr == w:
-                        return None
+        
+        cr = w
+        while True:
+            if cr.id == id:
+                return cr
+            else:
+                if cr.children != None:
+                    res = cr.children.search_child(id)
+                if res != None:
+                    return res
+                cr = cr.right
+                if cr == w:
+                    return None
     
     # TODO: cause indexOutOfBound, delete is not a required operation
     def delete(self, key):
@@ -267,26 +267,26 @@ def print_tree(root):
 
 H1 = FibonacciHeap()
 H2 = FibonacciHeap()
-n0 = Node(0)
-n1 = Node(1)
-n2 = Node(2)
-n3 = Node(3)
-n4 = Node(4)
-n5 = Node(5)
-n6 = Node(6)
-n7 = Node(7)
-n8 = Node(8)
-n9 = Node(9)
-n10 = Node(10)
-n11 = Node(11)
-n12 = Node(12)
-n13 = Node(13)
-n14 = Node(14)
-n15 = Node(15)
-n16 = Node(16)
-n17 = Node(17)
-n18 = Node(18)
-n19 = Node(19)
+n0 = Node('0001', 0)
+n1 = Node('0002', 1)
+n2 = Node('0003',2)
+n3 = Node('0004',3)
+n4 = Node('0005',4)
+n5 = Node('0006',5)
+n6 = Node('0007',6)
+n7 = Node('0008',7)
+n8 = Node('0009',8)
+n9 = Node('0010',9)
+n10 = Node('0011',10)
+n11 = Node('0012',11)
+n12 = Node('0013',12)
+n13 = Node('0014',13)
+n14 = Node('0015',14)
+n15 = Node('0016',15)
+n16 = Node('0017',16)
+n17 = Node('0018',17)
+n18 = Node('0019',18)
+n19 = Node('0020',19)
 
 H1.insert(n1)
 H1.insert(n3)
@@ -315,12 +315,6 @@ print_heap(H1)
 print_heap(H2)
 
 def test1():
-    # NH = FibonacciHeap()
-    # NH.union(H1)
-    # NH.union(H2)
-    # print_heap(NH)
-    # print("Minimum of NH: ")
-    # print(NH.min.value)
     # print("Extract 1, H1: ")
     H1.extract_min()
     # print_heap(H1)
@@ -349,11 +343,9 @@ def test1():
     print_heap(NH)
     print("Minimum of NH: ")
     print(NH.min.value)
-
-    print('===')
-    # print("Decrease key 7 to 2: ")
-    NH.decrease_key(7, 2)
-    # print_heap(NH)
+    print("Decrease '0008' to 2: ")
+    NH.decrease_key('0008', 2)
+    print_heap(NH)
 
     # print("Delete 6: ")
     # NH.delete(6)
@@ -373,13 +365,8 @@ def test1():
 def test2():
     H1.extract_min()
     print_heap(H1)
-    print('====')
     H1.extract_min()
     print_heap(H1)
-    print('====')
-    H1.extract_min()
-    print_heap(H1)
-    print('====')
     H1.extract_min()
     print_heap(H1)
     print("Minimum of H1: ")
@@ -402,5 +389,5 @@ def test2():
 
 
 if __name__ == '__main__':
-    # test1()
-    test2()
+    test1()
+    # test2()
