@@ -28,21 +28,16 @@ for node in nodelist:
     if node_name != 'none':
         node_dic_all[node_id] = {
             'address': [node_lat, node_lon],
-            'name': node_name
+            'name': node_name,
+            'neighbours': []
         }
         name_dic[node_name] = [node_id, node_lat, node_lon]
     else:
         node_dic_all[node_id] = {
-            'address': (node_lat, node_lon)
+            'address': (node_lat, node_lon),
+            'neighbours': []
         }
-'''
-node_all文件里存放所有node的id，经纬度，和名称。
-如果该node无name，则无此项
-可以用于根据id查询所有node的lat,lon,name
-数据结构："61340495": {"address": [42.3577809, -71.0702841], "name": "Ralph Cook Square"}
-'''
-with open('node_all.json', 'w') as fout:
-    json.dump(node_dic_all, fout)
+
 
 '''
 node_name文件只存放所有有name的node
@@ -51,7 +46,7 @@ node_name文件只存放所有有name的node
 数据结构："Ralph Cook Square": ["61340495", 42.3577809, -71.0702841]
 '''
 with open('node_name.json', 'w') as fout:
-    json.dump(name_dic, fout)
+    json.dump(name_dic, fout, indent = 4)
 
 # get way nodes
 #node_dic2 = {}
@@ -67,14 +62,21 @@ for way in waylist:
     if  road_flag:
         ndlist = way.getElementsByTagName('nd')
         each_way_node = {}
+        j = 0
+        a = {}
         for nd in ndlist:
             nd_id = nd.getAttribute('ref')
             node_lat = node_dic[nd_id][0]
             node_lon = node_dic[nd_id][1]
             #node_dic2[nd_id] = (node_lat, node_lon)
             each_way_node[nd_id] = (node_lat, node_lon)
+            a[j] = [nd_id,node_lat,node_lon]
+            j = j + 1
+        for k in range(j):
+            if k > 0:
+                node_dic_all[a[k-1][0]]['neighbours'].append(a[k])
+                node_dic_all[a[k][0]]['neighbours'].append(a[k-1])
     way_node[way_id] = each_way_node
-    
 #print (len(node_dic2))
 #with open('way_node_all.json', 'w') as fout:
 #    json.dump(node_dic2, fout)
@@ -85,4 +87,41 @@ way_node用于存储所有highway及其经过的node
 表示way_id为'8637791'的路上包含两个点'61353530'和'61353260',并显示他们的lat,lon
 '''
 with open('way_node.json', 'w') as fout:
-    json.dump(way_node, fout)
+    json.dump(way_node, fout, indent = 4)
+
+'''
+node_all文件里存放所有node的id，经纬度，名称和所有的相邻点。
+如果该node无name，则无此项
+可以用于根据id查询所有node的lat,lon,name
+数据结构："61340495": {
+        "address": [
+            42.3577809,
+            -71.0702841
+        ],
+        "name": "Ralph Cook Square",
+        "neighbours": [
+            [
+                "1038908673",
+                42.3576959,
+                -71.0706028
+            ],
+            [
+                "61510043",
+                42.3577985,
+                -71.0702046
+            ],
+            [
+                "61340491",
+                42.3584617,
+                -71.0706523
+            ],
+            [
+                "61469722",
+                42.357773,
+                -71.070279
+            ]
+        ]
+    }
+'''
+with open('node_all.json', 'w') as fout:
+    json.dump(node_dic_all, fout, indent = 4)
