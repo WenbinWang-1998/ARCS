@@ -31,14 +31,14 @@ for node in nodelist:
             'address': [node_lat, node_lon],
             'name': node_name,
             'neighbours': [],
-            'parentnode': []
+            'parentnode': [node_id]
         }
         name_dic[node_name] = [node_id, node_lat, node_lon]
     else:
         node_dic_all[node_id] = {
             'address': (node_lat, node_lon),
             'neighbours': [],
-            'parentnode': []
+            'parentnode': [node_id]
         }
 
 
@@ -58,10 +58,14 @@ for way in waylist:
     taglist = way.getElementsByTagName('tag')
     way_id = way.getAttribute('id')
     road_flag = False
+    one_way = False
     for tag in taglist:
-        if tag.getAttribute('k') == 'highway':
+        if tag.getAttribute('k') == 'oneway':
+            if tag.getAttribute('v') == 'yes':
+                one_way = True
+        elif tag.getAttribute('k') == 'highway':
             road_flag = True
-            break
+            #break
     if  road_flag:
         ndlist = way.getElementsByTagName('nd')
         each_way_node = {}
@@ -78,9 +82,15 @@ for way in waylist:
         for k in range(j):
             if k > 0:
                 distance = geodesic((a[k][1],a[k][2]), (a[k-1][1],a[k-1][2])).km# 计算相邻点之间的距离
-                node_dic_all[a[k-1][0]]['neighbours'].append([a[k],distance])
-                node_dic_all[a[k][0]]['neighbours'].append([a[k-1],distance])
-    way_node[way_id] = each_way_node
+                if one_way:
+                    node_dic_all[a[k-1][0]]['neighbours'].append([a[k],distance])
+                else:
+                    node_dic_all[a[k-1][0]]['neighbours'].append([a[k],distance])
+                    node_dic_all[a[k][0]]['neighbours'].append([a[k-1],distance])
+    way_node[way_id] = {
+                        'node':each_way_node,
+                        'one_Way':one_way
+                        }
 #print (len(node_dic2))
 #with open('way_node_all.json', 'w') as fout:
 #    json.dump(node_dic2, fout)
