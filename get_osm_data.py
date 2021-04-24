@@ -43,7 +43,7 @@ for node in nodelist:
             'parentnode': [node_id]
         }
         
-    coordinates.append([node_lat, node_lon])
+    coordinates.append([node_lon, node_lat])
 node_geo = {
         'type':'MultiPoint',
         'coordinates':coordinates
@@ -86,7 +86,7 @@ for way in waylist:
             node_lat = node_dic[nd_id][0]
             node_lon = node_dic[nd_id][1]
             #node_dic2[nd_id] = (node_lat, node_lon)
-            each_way_node[nd_id] = (node_lat, node_lon)
+            each_way_node[nd_id] = (node_lon,node_lat)
             a[j] = [nd_id,node_lat,node_lon]
             j = j + 1
         for k in range(j):
@@ -163,3 +163,17 @@ node_all文件里存放所有node的id，经纬度，名称和所有的相邻点
 '''
 with open('node_all.json', 'w') as fout:
     json.dump(node_dic_all, fout, indent = 4)
+
+features = []
+for way in way_node:
+    waynode = []
+    for node in way_node[way]['node']:
+        waynode.append(way_node[way]['node'][node])
+    way_f = { "type": "Feature", "properties": { "scalerank": 5 }, "geometry": { "type": "LineString", "coordinates": waynode } }
+    features.append(way_f)
+waywayway = {
+        "type": "FeatureCollection",
+        "features": features
+        }
+with open('way_feature.json', 'w') as fout:
+    json.dump(waywayway, fout, indent = 4)
