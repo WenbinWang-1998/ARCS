@@ -10,6 +10,8 @@ waylist = root.getElementsByTagName('way')
 node_dic = {}
 node_dic_all = {}
 name_dic = {}
+node_geo = {}
+coordinates = []
 # all nodes
 for node in nodelist:
     node_id = node.getAttribute('id')
@@ -36,10 +38,16 @@ for node in nodelist:
         name_dic[node_name] = [node_id, node_lat, node_lon]
     else:
         node_dic_all[node_id] = {
-            'address': (node_lat, node_lon),
+            'address': [node_lat, node_lon],
             'neighbours': [],
             'parentnode': [node_id]
         }
+        
+    coordinates.append([node_lat, node_lon])
+node_geo = {
+        'type':'MultiPoint',
+        'coordinates':coordinates
+    }
 
 
 '''
@@ -50,6 +58,8 @@ node_name文件只存放所有有name的node
 '''
 with open('node_name.json', 'w') as fout:
     json.dump(name_dic, fout, indent = 4)
+with open('node_geo.json', 'w') as fout:
+    json.dump(node_geo, fout, indent = 4)
 
 # get way nodes
 #node_dic2 = {}
@@ -60,7 +70,7 @@ for way in waylist:
     road_flag = False
     one_way = False
     for tag in taglist:
-        if tag.getAttribute('k') == 'oneway':
+        if tag.getAttribute('k') == 'oneway':# 考虑单向车道
             if tag.getAttribute('v') == 'yes':
                 one_way = True
         elif tag.getAttribute('k') == 'highway':
