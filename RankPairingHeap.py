@@ -33,45 +33,83 @@ class RankPairingHeap:
     def deletemin(self):
         minimum=float('inf')  #the maximum number in float type
         minNode:RankPNode=None
-        #print(self.root)
         for i in self.root:
             if i==None:
                 continue
             else:
-                if i.key<minimum:
+                if i.key<=minimum:####从小于改成小于等于
                     minimum=i.key
                     minNode=i
         self.root[minNode.rank]=None  # we should update the root array,because we already delete the minimum
-        if minNode.leftChild!=None:
-            parent:RankPNode=minNode.leftChild
-            rparent:RankPNode=parent.rightChild
-            while parent.rightChild!=None:   #start recursion
-                parent.parent = None
-                rparent.parent=None
-                parent.rightChild=None
-                if parent.leftChild!=None:
-                    parent.rank=parent.leftChild.rank+1
-                    self.insert(parent)
-                else:
-                    parent.rank=0
-                    self.insert(parent)
-                self.insert(parent)
-                parent=rparent
-                rparent=rparent.rightChild
-        else:
+        if minNode.leftChild==None and minNode.rightChild==None:
             return minNode
-        #dealing with the last node, because the last while loop will left a node
-        if parent!=None:
-            if parent.parent!=None:
-                parent.parent.rightChild=None  #update the information of last node and second to last(last's parent)
-                parent.parent=None
-            if parent.leftChild==None:
-                parent.rank=0
-                self.insert(parent)
+        new:RankPNode=minNode.leftChild
+        right:RankPNode=new.rightChild
+        while(right!=None):
+            right.parent=None
+            new.parent=None
+            new.rightChild=None
+            if(new.leftChild!=None):
+                new.rank=new.leftChild.rank+1
+                self.insert(new)
             else:
-                parent.rank=parent.leftChild.rank+1
-                self.insert(parent)
+                new.rank=0
+                self.insert(new)
+            new=right
+            right=new.rightChild
+        if new.parent!=None:
+            new.parent.rightChild=None
+            new.parent=None
+        if new.leftChild==None:
+            new.rank=0
+            self.insert(new)
+        else:
+           new.rank=new.leftChild.rank+1;
+           self.insert(new)
         return minNode
+            
+#     def deletemin(self):
+#         minimum=float('inf')  #the maximum number in float type
+#         minNode:RankPNode=None
+#         #print(self.root)
+#         for i in self.root:
+#             if i==None:
+#                 continue
+#             else:
+#                 if i.key<minimum:
+#                     minimum=i.key
+#                     minNode=i
+#         self.root[minNode.rank]=None  # we should update the root array,because we already delete the minimum
+#         if minNode.leftChild!=None:
+#             parent:RankPNode=minNode.leftChild
+#             rparent:RankPNode=parent.rightChild
+#             while parent.rightChild!=None:   #start recursion
+#                 parent.parent = None
+#                 rparent.parent=None
+#                 parent.rightChild=None
+#                 if parent.leftChild!=None:
+#                     parent.rank=parent.leftChild.rank+1
+#                     self.insert(parent)
+#                 else:
+#                     parent.rank=0
+#                     self.insert(parent)
+#                 self.insert(parent)
+#                 parent=rparent
+#                 rparent=rparent.rightChild
+#         else:
+#             return minNode
+#         #dealing with the last node, because the last while loop will left a node
+#         if parent!=None:
+#             if parent.parent!=None:
+#                 parent.parent.rightChild=None  #update the information of last node and second to last(last's parent)
+#                 parent.parent=None
+#             if parent.leftChild==None:
+#                 parent.rank=0
+#                 self.insert(parent)
+#             else:
+#                 parent.rank=parent.leftChild.rank+1
+#                 self.insert(parent)
+#         return minNode
 
     def adjustRank(self,node:RankPNode): # Bottom up strategy to update the rank
         lrank=-1
