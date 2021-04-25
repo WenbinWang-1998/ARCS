@@ -1,79 +1,63 @@
-from myFiboHeap import *
+from RankPNode import RankPNode
+from RankPairingHeap import RankPairingHeap
+import math
+import json
+with open("node_all.json") as f:
+    result = json.load(f)
 
-def dijkstra(id_o, id_d):
-    # Init
-    res = math.inf
-    heap = FibonacciHeap()
-    # all nodes init to inf
-    # build all nodes
-    for each in dict.keys():
-        fibo_node = Node(each, math.inf)
-        heap.insert(fibo_node)
-    # decrease id_o to 0
-    # print_heap(heap)
-    heap.decrease_key(id_o, 0)
-    # print_heap(heap)
-    while heap.count != 0:
-        # print_heap(heap)
-        min_node = heap.extract_min()
-        heap.popped[min_node.id] = 1
-        # print(min_node.id)
-        adj_nodes = []  # contains id
-        for each in dict[min_node.id].keys():
-            if not each in heap.popped:
-                adj_nodes.append(each)
-        for each in adj_nodes:
-            each_fibo_node = heap.find_node(each)
-            if each_fibo_node.value > min_node.value + dict[min_node.id][each]:
-                new_value = min_node.value + dict[min_node.id][each]
-                heap.decrease_key(each, new_value)
-                dict_pred[each_fibo_node.id] = min_node.id
-                res = new_value if each == id_d else res
-                
-    
-    return res
-def print_smallest_path(dict_pred, id_s, id_o):
-    pred = id_o
-    res = 'the path is '
-    while pred is not id_s:
-        res += pred
-        res += ' <- '
-        pred = dict_pred[pred]
-    res += pred
-    print(res)
+#wwb写的rankparingheap，dist是第一个输入参数，id是第二个
+def Dijkstra(src,tar): #src和tar必须是list类型的
+    #需传入起始点，终点，以及整个图结构
+    length=len(result)
+    heap=RankPairingHeap (length)
+    ###New=find_closest_street(way_dict,src,tar);#接收四个返回值
+    ###start=New[0]#新起点
+    ###end=New[2]#新终点
+    rootnode=RankPNode(0,get_keys(result,src)) #起始点的id的RankPNode
+    targetnode=RankPNode(float('inf'),get_keys(result,tar))#终点的id的RankPNode
+    #heap.insert((rootnode))
+    dist={}#key为id,value为RankPNode类型的node
+    for id in result.keys():
+        if id==rootnode.id:
+            heap.insert((rootnode))
 
-class node_in_map:
-    def __init__(self, id, adj):
-        self.id = id
-        self.adj = adj
-        self.pred = None
+        else:
+            node=RankPNode(float('inf'),id) #初始距离声明为无穷大
+            dist[id]=node
+            heap.insert(node)
+    while(True):#始终循环直到找到最终点的id
+        node:RankPNode=heap.deletemin() #该Node为RankPNode类型
+        if(node==None):
+            return
+        rnode=result.get(node.id)#获取json中对应的node
 
-
-if __name__ == '__main__':
-    n1 = node_in_map('0001', {'0002': 1, '0005': 1, '0006': 1})
-    n2 = node_in_map('0002', {'0003': 1, '0005': 1, '0001': 1})
-    n3 = node_in_map('0003', {'0002': 1, '0004': 1})
-    n4 = node_in_map('0004', {'0003': 1, '0005': 10, '0006': 1})
-    n5 = node_in_map('0005', {'0004': 10, '0002': 1, '0001': 1})
-    n6 = node_in_map('0006', {'0004': 1, '0001': 1})
-    dict = {}
-    dict[n1.id] = n1.adj
-    dict[n2.id] = n2.adj
-    dict[n3.id] = n3.adj
-    dict[n4.id] = n4.adj
-    dict[n5.id] = n5.adj
-    dict[n6.id] = n6.adj
-    # dict for pred
-    dict_pred = {}
-
-    print(f"min cost is {dijkstra('0004', '0001')}")
-
-    # print(dict_pred)
-    print_smallest_path(dict_pred, '0004', '0001')
+        if node.id==targetnode: #一旦弹出target，就结束
+            return
+        euclidean=math.sqrt((tar[0]-rnode.get('address')[0])**2+(tar[1]-rnode.get('address')[1])**2)#测定当前节点到终点的欧式距离
+        neighbors=result.get(node.id).get('neighbours')#从node结构中提取id，利用此id得到图中node的neighbor list。
+        nLen=len(neighbors) #共有几个neighbor
+        for neighbor in neighbors:
+            id=neighbor[0][0]#获取点的id并在dict中查找对应RankPNode
+            next=dist.get(id)#得到RankPNode
+            if next==None:
+                continue
+            nnode=result.get(next.id)#获取json中对应的node   rnode和nnode对应
+            distance=math.sqrt((nnode.get('address')[0]-rnode.get('address')[0])**2+(nnode.get('address')[1]-rnode.get('address')[1])**2)+node.key
+            if next.key>distance:
+                result.get(next.id).get('parentnode')[0]=next.id #因为parentnode中预存储了自己，该list中只有一个值，所以是[0]
+                heap.decreaseKey(distance,next)#对对应node进行decreasekey
 
 
 
+# 该方法用于获取输入latitude与longitude对应的id,返回为str
+def get_keys(dic, latlong):
+    for key in dic.keys():
+        lis = dic.get(key).get('address')
+        if lis[0] == latlong[0] and lis[1] == latlong[1]:
+            return key
 
 
-        
+Dijkstra([42.3688772,-71.0797119],[42.3688772,-71.0797119])
+print("结束")
+
 
