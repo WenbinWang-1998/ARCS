@@ -2,6 +2,13 @@ import json
 import math
 import heapq as hq  # using heapq in python
 
+# – Lines 5 to 9 show the initialization. INF is initialized to half of the maximum value of a signed 64 bit integer (a signed 64 bit integer can display integers from -2^{63} to (2^{63} - 1).
+# – In lines 9 and 10 we initialize a priority queue and insert the tuple (dist[source], source) since we start with the source node.
+# – Lines 12 to 25 implement the repeating loop. In line 13 we try to find the next node with the smallest distance value. We do this with a priority queue. In line 16 we discard “wrong tuples”, see also Part 3a.
+# – Lines 17 and 18 are optional. They make the algorithm stop once the minimum distance for the target node has been found. Note though that if you uncomment these lines the distances to other nodes beside the target node are not necessarily found, so uncomment these lines only if you are interested in a particular target node.
+# – In line 27 we check whether a path has been found.
+# – In lines 30 to 38 we reconstruct the shortest path with the help of the predecessor dictionary.
+In particular this is done in lines 32 to 36 where we follow the shortest path backwards from the target to the source. We recognize the source by checking if pred[node] == node, see also the way we initialized the predecessor dictionary in line 6.
 # version1:
 # input: source and target id
 # ouput: null (print out shortest path and distance)
