@@ -34,6 +34,7 @@ def dijkstra(adj, source_addr, target_addr):
     if dist[target] == math.inf:
         # cannot find path
         print("There is no path between ", source, "and", target)
+        return
     else:
         reversed_path = []
         # find predecessor from target
