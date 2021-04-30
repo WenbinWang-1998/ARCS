@@ -10,29 +10,29 @@ def Astar(adj, source_addr, target_addr):
     source = get_id_from_addr(all_nodes, source_addr)
     target = get_id_from_addr(all_nodes, target_addr)
     # store the predecessor of all nodes, init with itself
-    pred = {x: x for x in adj}  # key是id,value是neighbor的id和距离，所有点的id
+    pred = {x: x for x in adj}  
     # store the all min distitance of all nodes, init with infinity
     dist = {x: math.inf for x in adj}
     # initialize
 
     target_coordinate = get_addr_from_id(
-        all_nodes, target)  # 获取target node中对应的坐标
+        all_nodes, target)  # target node's coordinate
 
     dist[source] = 0
     heap = []
-    hq.heappush(heap, [dist[source], source])  # 只有push和pop,列表内第一个是距离,第二个是id
+    hq.heappush(heap, [dist[source], source])  # first is distance, second is id
     while heap:
-        u = hq.heappop(heap)  # u is a list [u_dist, u_id] #pop时根据distance大小选最小
+        u = hq.heappop(heap)  # u is a list [u_dist, u_id] 
         u_dist = u[0]
         u_id = u[1]
         if u_id == target:
             break
         if u_dist == dist[u_id]:
-            for v in adj[u_id]:  # 找到neighbor
+            for v in adj[u_id]:  # finding neighbors
                 # if u_id == target:
                 #     break
                 v_id = v[0]
-                w_uv = v[1]  # 到neighbor之间的距离
+                w_uv = v[1]  # the distance between node and neighbor
                 current = get_addr_from_id(all_nodes, v_id)
                 euclidean = math.sqrt(
                     (target_coordinate[0] - current[0]) ** 2 + (target_coordinate[1] - current[1]) ** 2)
@@ -40,10 +40,11 @@ def Astar(adj, source_addr, target_addr):
                 if dist[u_id] + w_uv < dist[v_id]:
                     dist[v_id] = dist[u_id] + w_uv
                     hq.heappush(heap, [dist[v_id], v_id])  # decrease key
-                    pred[v_id] = u_id  # predecessor存前驱节点
+                    pred[v_id] = u_id  
     if dist[target] == math.inf:
         # cannot find path
         print("There is no path between ", source, "and", target)
+        return
     else:
         reversed_path = []
         # find predecessor from target
@@ -56,13 +57,6 @@ def Astar(adj, source_addr, target_addr):
             node = pred[node]
         # reverse
         path = reversed_path[::-1]
-        # print(len(path))
-        # print(path)
-        # print("The shortest path is " + " ".join(path) + "\n")
-        # print(
-        #     f"The distance from {source} to {target} is {str(dist[target])}\n")
-        # print("distance dictionary: " + str(dist) + "\n")
-        # print("predecessor dictionary: " + str(pred))
         node_geo = {"type": "FeatureCollection","properties": { "scalerank": 5}, "features": [{ "type": "Feature", "geometry":
                     { "type": "LineString", "coordinates": path}}]}
         with open('a_star_geo_out.json', 'w') as fout:
