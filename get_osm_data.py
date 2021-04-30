@@ -76,13 +76,14 @@ for way in waylist:
                         'node':each_way_node,
                         'one_Way':one_way
                         }
-                        
+
 '''
-node_all stores all the nodes' id, lon, lat, name, and distance to all the neighbours.
-如果该node无name，则无此项
-可以用于根据id查询所有node的lat,lon,name
-还可用于查找每个点的相邻点，包括id,经纬度和距离
-数据结构："61340495": {
+node_all.json stores all the nodes' id, lon, lat, name(if has), and distance to all the neighbours.
+It is the most important file because all the algorithms use node_all to search all the nodes' lat, lon, name and neighbours.
+All the neighbours' nod_id, lat and lon are also included.
+Situation of 'one_way' street is considered, streets with <tag k="oneway" v="yes"/> are irreversible。
+Example of data structure:
+    "61340495": {
         "address": [
             42.3577809,
             -71.0702841
@@ -129,19 +130,48 @@ with open('node_all.json', 'w') as fout:
     json.dump(node_dic_all, fout, indent = 4)
 
 '''
-way_node用于存储所有highway及其经过的node
-可以用于查看每个node的neighbour_node
-数据结构："8637791": {"61353530": [42.3532505, -71.0788875], "61353260": [42.3538006, -71.0767435]}
-表示way_id为'8637791'的路上包含两个点'61353530'和'61353260',并显示他们的lat,lon
+way_node.json stores all the streets(highways) and nodes on them
+It is used to check whether the origin and target nodes are on the street, if not, calculate the nearest street.
+It also shows whether the streets are one-way.
+Example of data sturcture:
+    "48982057": {
+        "node": {
+            "527724554": [
+                -71.055624,
+                42.3532558
+            ],
+            "1545170855": [
+                -71.0558854,
+                42.3531353
+            ],
+            "1545170773": [
+                -71.0561433,
+                42.3530331
+            ],
+            "1545170829": [
+                -71.0565011,
+                42.3529136
+            ],
+            "527724553": [
+                -71.0571703,
+                42.3527197
+            ]
+        },
+        "one_Way": true
+        }
 '''
 with open('way_node.json', 'w') as fout:
     json.dump(way_node, fout, indent = 4)
 
 '''
-node_name文件只存放所有有name的node
-没有name的node不会被保存在这个文件中
-可以用于根据name查询node的id,lat,lon
-数据结构："Ralph Cook Square": ["61340495", 42.3577809, -71.0702841]
+node_name only stores the nodes with names.
+It can be used when searching the nodes by its name.
+Example of data structure:
+    "Ralph Cook Square": [
+        "61340495",
+        42.3577809,
+        -71.0702841
+    ]
 '''
 with open('node_name.json', 'w') as fout:
     json.dump(name_dic, fout, indent = 4)
