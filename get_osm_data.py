@@ -130,10 +130,10 @@ with open('node_all.json', 'w') as fout:
     json.dump(node_dic_all, fout, indent = 4)
 
 '''
-way_node.json stores all the streets(highways) and nodes on them
-It is used to check whether the origin and target nodes are on the street, if not, calculate the nearest street.
-It also shows whether the streets are one-way.
-Example of data sturcture:
+way_node.json stores all the streets(highways) and the nodes on them.
+It is used to check whether the start and target nodes are on the street, if not, calculate and find the nearest street.
+It also shows whether the streets are one_way.
+Example of data structure:
     "48982057": {
         "node": {
             "527724554": [
@@ -165,7 +165,7 @@ with open('way_node.json', 'w') as fout:
 
 '''
 node_name only stores the nodes with names.
-It can be used when searching the nodes by its name.
+It can be used when searching the nodes by names.
 Example of data structure:
     "Ralph Cook Square": [
         "61340495",
