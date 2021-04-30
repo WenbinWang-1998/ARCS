@@ -48,7 +48,11 @@ def Bellmanford(adj, source_addr, target_addr):
             node = pred[node]
         # reverse
         path = reversed_path[::-1]
-    return path, str(dist[target])
+        node_geo = {"type": "FeatureCollection","properties": { "scalerank": 5}, "features": [{ "type": "Feature", "geometry":
+                    { "type": "LineString", "coordinates": path}}]}
+        with open('bellmanford_geo_out.json', 'w') as fout:
+            json.dump(node_geo, fout, indent = 4)
+    return node_geo, str(dist[target])
 
 # input: start and target position [lati, longi]
 # output: heuristic estimate of distance h()
