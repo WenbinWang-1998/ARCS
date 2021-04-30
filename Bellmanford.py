@@ -1,6 +1,5 @@
 import json
 import math
-import heapq as hq  # using heapq in python
 import time
 import queue
 
@@ -18,24 +17,25 @@ def Bellmanford(adj, source_addr, target_addr):
     q = queue.LifoQueue()
     dist[source] = 0
     inqueue[source]=1
-    q.put([dist[source], source]) #q的顺序是先 distance,后id. 和adj正好相反
+    q.put([dist[source], source]) 
     while not q.empty():
-        u = q.get()  # u is a list [u_dist, u_id] #pop时根据distance大小选最小
+        u = q.get()  
         u_dist = u[0]
         u_id = u[1]
         inqueue[u_id]=0
-        for v in adj[u_id]:  # 找到neighbor
+        for v in adj[u_id]:  
             v_id = v[0]
-            w_uv = v[1]  # 到neighbor之间的距离
+            w_uv = v[1]  
             if dist[u_id] + w_uv < dist[v_id]:
                 dist[v_id] = dist[u_id] + w_uv
-                pred[v_id] = u_id  # predecessor存前驱节点
+                pred[v_id] = u_id  
                 if inqueue[v_id]==0:
                     inqueue[v_id]=1
                     q.put([dist[v_id], v_id])
     if dist[target] == math.inf:
         # cannot find path
         print("There is no path between ", source, "and", target)
+        return
     else:
         reversed_path = []
         # find predecessor from target
