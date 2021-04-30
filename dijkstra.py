@@ -55,7 +55,11 @@ def dijkstra(adj, source_addr, target_addr):
         #     f"The distance from {source} to {target} is {str(dist[target])}\n")
         # print("distance dictionary: " + str(dist) + "\n")
         # print("predecessor dictionary: " + str(pred))
-        return path, str(dist[target])
+        node_geo = {"type": "FeatureCollection","properties": { "scalerank": 5}, "features": [{ "type": "Feature", "geometry":
+                    { "type": "LineString", "coordinates": path}}]}
+        with open('dijkstra_geo_out.json', 'w') as fout:
+            json.dump(node_geo, fout, indent = 4)
+        return node_geo, str(dist[target])
 
 def get_adj_from_all_nodes():
     "get adjcent nodes of all nodes"
