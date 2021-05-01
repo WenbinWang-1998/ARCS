@@ -8,7 +8,6 @@ nodelist = root.getElementsByTagName('node')
 waylist = root.getElementsByTagName('way')
 node_dic = {}
 node_dic_all = {}
-name_dic = {}
 # all nodes
 for node in nodelist:
     node_id = node.getAttribute('id')
@@ -24,20 +23,11 @@ for node in nodelist:
     except:
         pass
     node_dic[node_id] = (node_lat, node_lon)
-    if node_name != 'none':
-        node_dic_all[node_id] = {
-            'address': [node_lat, node_lon],
-            'name': node_name,
-            'neighbours': [],
-            'parentnode': [node_id]
-        }
-        name_dic[node_name] = [node_id, node_lat, node_lon]
-    else:
-        node_dic_all[node_id] = {
-            'address': [node_lat, node_lon],
-            'neighbours': [],
-            'parentnode': [node_id]
-        } 
+    node_dic_all[node_id] = {
+        'address': [node_lat, node_lon],
+        'neighbours': [],
+        'parentnode': [node_id]
+    }
 # get way nodes
 way_node = {}
 for way in waylist:
@@ -162,16 +152,3 @@ Example of data structure:
 '''
 with open('way_node.json', 'w') as fout:
     json.dump(way_node, fout, indent = 4)
-
-'''
-node_name only stores the nodes with names.
-It can be used when searching the nodes by names.
-Example of data structure:
-    "Ralph Cook Square": [
-        "61340495",
-        42.3577809,
-        -71.0702841
-    ]
-'''
-with open('node_name.json', 'w') as fout:
-    json.dump(name_dic, fout, indent = 4)
