@@ -3,6 +3,8 @@ import math
 import time
 import queue
 
+#Giving adj, formed by the fourth function below, source and target which denoted by [latitude, longitude] to get 
+#the Nodes’ list along the shortest path and the distance. 
 def Bellmanford(adj, source_addr, target_addr):
     with open("node_all.json") as f:
         all_nodes = json.load(f)
@@ -54,9 +56,8 @@ def Bellmanford(adj, source_addr, target_addr):
             json.dump(node_geo, fout, indent = 4)
     return node_geo, str(dist[target])
 
-# input: start and target position [lati, longi]
-# output: heuristic estimate of distance h()
 
+#Getting the address(longitude, latitude) from Node’s id and reverse it to address(latitude, longitude).
 def get_addr_from_id_reversed(all_nodes, id):
     "get the addr given node id and reverse the lati and longi"
     addr_list = all_nodes.get(id).get('address')
@@ -66,12 +67,12 @@ def get_addr_from_id_reversed(all_nodes, id):
     new_addr.append(addr_list[0])
     return new_addr
 
-
+#Getting the address(longitude, latitude) from Node’s id.
 def get_addr_from_id(all_nodes, id):
     "get the addr given node id and reverse the lati and longi"
     return all_nodes.get(id).get('address')
 
-
+#Forming a dictionary called adj(key:Node, value:neighbors)
 def get_adj_from_all_nodes():
     "get adjcent nodes of all nodes"
     with open("node_all.json") as f:
@@ -89,7 +90,7 @@ def get_adj_from_all_nodes():
     return adj
 
 
-
+#Getting the Node’s id from address.
 def get_id_from_addr(all_nodes, lati_longi):
     "get the node id given addr"
     for id in all_nodes.keys():
