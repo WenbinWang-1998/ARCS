@@ -14,7 +14,6 @@ def Astar(adj, source_addr, target_addr):
     # store the all min distitance of all nodes, init with infinity
     dist = {x: math.inf for x in adj}
     # initialize
-
     target_coordinate = get_addr_from_id(
         all_nodes, target)  # target node's coordinate
 
@@ -29,8 +28,6 @@ def Astar(adj, source_addr, target_addr):
             break
         if u_dist == dist[u_id]:
             for v in adj[u_id]:  # finding neighbors
-                # if u_id == target:
-                #     break
                 v_id = v[0]
                 w_uv = v[1]  # the distance between node and neighbor
                 current = get_addr_from_id(all_nodes, v_id)
@@ -62,18 +59,6 @@ def Astar(adj, source_addr, target_addr):
         with open('a_star_geo_out.json', 'w') as fout:
             json.dump(node_geo, fout, indent = 4)
     return node_geo, str(dist[target])
-
-
-
-
-
-# input: start and target position [lati, longi]
-# output: heuristic estimate of distance h()
-
-
-def heuristic_estimate_of_distance(start_addr, target_addr):
-    return math.sqrt((start_addr[0] - target_addr[0]) ** 2 + (start_addr[1] - target_addr[1]) ** 2)
-
 
 def get_addr_from_id_reversed(all_nodes, id):
     "get the addr given node id and reverse the lati and longi"
@@ -122,7 +107,6 @@ def main():
     path, dist = Astar(adj, [42.3657714, -71.0510548], [42.3586117, -71.0503471])
     print(f'Time spent: {time.time() - start_t}')  # Time spend
     print(path)
-
 
 
     start_t = time.time()
